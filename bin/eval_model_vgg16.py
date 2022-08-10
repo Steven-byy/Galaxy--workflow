@@ -8,7 +8,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
-from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+from metrics import confusion_matrix, precision_recall_fscore_support
 import logging
 import time
 from model_selection import EarlyStopping, VGG16Model
