@@ -28,18 +28,18 @@ DATASET_DIR = "./"
 def get_arguments():
     
     parser = argparse.ArgumentParser(description="Galaxy Classification: data.txt augmentation")
-    parser.add_argument('--class_str', type=str, default='class_2',help='class to augment')
+    parser.add_argument('--class_str', type=str, default='class_3',help='class to augment')
     parser.add_argument('--num', type=int, default=10,help='number of images to create')  
     parser.add_argument(
         "-f","--input_files", nargs='*', default="",
         help="input data.txt, overrides input dir"
         )
     parser.add_argument(
-        "-i","--input_dir",default="",
+        "-i","--input_dir",default="../resize_output/",
         help="directory with data.txt"
         )
     parser.add_argument(
-        "-o","--output_dir",default="",
+        "-o","--output_dir",default="../augment_train_output",
         help="directory for outputs"
         ) 
     args = parser.parse_args()    
@@ -116,9 +116,12 @@ def add_augmented_data(class_str, num):
     while new_images < num:
         for img_path in all_images:
             augmented_img = augmentation.image_augment(img_path)
-            path_s, _ = img_path.split(".")
+            if img_path.find("\\"):  #Windows Reader
+                path_s= img_path.split(".")[2].split("\\")[1]
+            else:       #Linux Reader
+                path_s= img_path.split(".")[2].split("/")[2]
             fname = "_".join(path_s.split("_")[:3])
-            fname = fname  + "_" + str(img_num) + "_proc.jpg"
+            fname = "../augment_train_output/"+ fname  + "_" + str(img_num) + "_proc.jpg"
             cv2.imwrite(fname,augmented_img*255)
             new_images +=1
             img_num+=1

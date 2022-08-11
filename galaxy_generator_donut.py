@@ -65,7 +65,7 @@ def run_workflow(DATA_PATH):
     sc = SiteCatalog()
 
     shared_scratch_dir = os.path.join(os.getcwd(), "scratch")
-    local_storage_dir = os.path.join(os.getcwd(), "pro_image")
+    local_storage_dir = os.path.join(os.getcwd(), "resize_output")
 
     local = Site("local")\
                 .add_directories(
@@ -295,7 +295,7 @@ def run_workflow(DATA_PATH):
     except PegasusClientError as e:
         print(e.output)   
     #graph_filename = "galaxy-wf.dot"
-    #wf.graph(include_files=True, no_simplify=True, label="xform-id", pro_image = graph_filename)
+    #wf.graph(include_files=True, no_simplify=True, label="xform-id", resize_output = graph_filename)
 
 
 def main():

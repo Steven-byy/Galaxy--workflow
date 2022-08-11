@@ -131,7 +131,7 @@ def main():
     l = galaxy_dataset.generate_dataset()
     output_images = []
     output_files = []
-    print(l)
+    # print(l)
 
     with open('../datasets/data.txt', 'w') as file:
         for k in l:

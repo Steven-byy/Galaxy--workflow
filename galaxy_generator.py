@@ -30,13 +30,13 @@ def split_preprocess_jobs(preprocess_images_job, input_images, postfix):
     job_input_output = {}
 
     for i in range(len(preprocess_images_job)):
-        job_input_output[i] = {"input": [], "pro_image": []}
+        job_input_output[i] = {"input": [], "resize_output": []}
 
     for i in range(len(input_images)):
         curr = i % len(preprocess_images_job)
         job_input_output[curr]["input"].append(input_images[i])
         out_file = File(str(input_images[i]).split(".")[0] + postfix + ".jpg")
-        job_input_output[curr]["pro_image"].append(out_file)
+        job_input_output[curr]["resize_output"].append(out_file)
         resized_images.append(out_file)
 
     for curr in range(len(preprocess_images_job)):
@@ -45,7 +45,7 @@ def split_preprocess_jobs(preprocess_images_job, input_images, postfix):
             tmp_file_list.append(f.lfn)
         preprocess_images_job[curr].add_args("-f {}".format(" ".join(tmp_file_list)))
         preprocess_images_job[curr].add_inputs(*job_input_output[curr]["input"])
-        preprocess_images_job[curr].add_outputs(*job_input_output[curr]["pro_image"])
+        preprocess_images_job[curr].add_outputs(*job_input_output[curr]["resize_output"])
 
     return resized_images
 
@@ -292,7 +292,7 @@ def run_workflow(DATA_PATH):
     except PegasusClientError as e:
         print(e.output)   
     #graph_filename = "galaxy-wf.dot"
-    #wf.graph(include_files=True, no_simplify=True, label="xform-id", pro_image = graph_filename)
+    #wf.graph(include_files=True, no_simplify=True, label="xform-id", resize_output = graph_filename)
 
 
 def main():

@@ -18,7 +18,7 @@ def parse_args(args):
         help="directory with data.txt"
     )
     parser.add_argument(
-        "-o", "--output_dir", default="../pro_image",
+        "-o", "--output_dir", default="../resize_output",
         help="directory for outputs"
     )
     return parser.parse_args(args)
@@ -46,9 +46,14 @@ def main():
         bottom = (height + new_height) / 2
 
         img = img.crop((left, top, right, bottom))
-        img_id = img_path.split(".")[2].split("/")[2]
-        img_path = "../pro_image/" + img_id + "_proc.jpg"
-        img.save(img_path)
+        if img_path.find('\\'):  # Windows Reader
+            img_id = img_path.split(".")[2].split("\\")[1]
+            img_path = "../resize_output/" + img_id + "_proc.jpg"
+            img.save(img_path)
+        else:  # Linux Reader
+            img_id = img_path.split(".")[2].split("/")[2]
+            img_path = "../resize_output/" + img_id + "_proc.jpg"
+            img.save(img_path)
 
 
 if __name__ == '__main__':
