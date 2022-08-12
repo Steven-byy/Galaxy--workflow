@@ -28,7 +28,7 @@ DATASET_DIR = "./"
 def get_arguments():
     
     parser = argparse.ArgumentParser(description="Galaxy Classification: data.txt augmentation")
-    parser.add_argument('--class_str', type=str, default='class_3',help='class to augment')
+    parser.add_argument('--class_str', type=str, default='class_2',help='class to augment')
     parser.add_argument('--num', type=int, default=10,help='number of images to create')  
     parser.add_argument(
         "-f","--input_files", nargs='*', default="",

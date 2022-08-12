@@ -8,7 +8,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
-from metrics import confusion_matrix, precision_recall_fscore_support
+from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import logging
 import time
 from model_selection import EarlyStopping, VGG16Model
@@ -21,7 +21,7 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 # PATHS
 REL_PATH = ""
 DATA_DIR = ""
-TEST_DATA_PATH        = REL_PATH + DATA_DIR 
+TEST_DATA_PATH        = "../resize_output/"
 VIS_RESULTS_PATH      = REL_PATH + ''
 FINAL_CHECKPOINT_PATH = "final_vgg16_model.pth"
 results_record = open(VIS_RESULTS_PATH+"exp_results.csv", 'w+')

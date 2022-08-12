@@ -20,11 +20,12 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 
 REL_PATH = "./"
 DATA_DIR = "./"
-TRAIN_DATA_PATH  = REL_PATH + DATA_DIR 
+# TRAIN_DATA_PATH  = REL_PATH + DATA_DIR
+TRAIN_DATA_PATH = "../resize_output/"
 TEST_DATA_PATH   = REL_PATH + DATA_DIR
-VAL_DATA_PATH    = REL_PATH + DATA_DIR
-CHECKPOINT_DIR   = REL_PATH 
-VIS_RESULTS_PATH = REL_PATH 
+VAL_DATA_PATH    = "../resize_output/"
+CHECKPOINT_DIR   = "../HPO_output"
+VIS_RESULTS_PATH = "../HPO_output"
 
 
 
@@ -57,11 +58,12 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 
 
 def get_arguments():
-    
+
+
     parser = argparse.ArgumentParser(description="Galaxy Classification")
     
-    parser.add_argument('--batch_size', type=int, default=32, help='batch size for training')
-    parser.add_argument('--cuda', type=int, default=0, help='use gpu support')
+    parser.add_argument('--batch_size', type=int, default=8, help='batch size for training')
+    parser.add_argument('--cuda', type=int, default=2, help='use gpu support')
     parser.add_argument('--seed', type=int, default=123, help='select seed number for reproducibility')
     parser.add_argument('--root_path', type=str, default='./data.txt',help='path to dataset ')
     parser.add_argument('--save', type=str, default = REL_PATH + 'checkpoints/vgg16_galaxy/',help='path to checkpoint save directory ')

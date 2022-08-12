@@ -55,11 +55,11 @@ class GalaxyDataset(Dataset):
             train_transforms.append(torchvision.transforms.ToTensor())
             self.train_transforms = torchvision.transforms.Compose(train_transforms)
      
-        class_0_files = []
-        class_1_files = []
-        class_2_files = []
-        class_3_files = []
-        class_4_files = []
+        # class_0_files = []
+        # class_1_files = []
+        # class_2_files = []
+        # class_3_files = []
+        # class_4_files = []
 
         if prefix == "trainval":
             class_0_files = glob.glob(filespath + "train" + "_class_0_*.jpg") + glob.glob(filespath + "val" + "_class_0_*.jpg")
