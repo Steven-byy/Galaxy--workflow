@@ -7,16 +7,16 @@ tensor = (3,256, 256)
 
 # VGG16trained model Architecture
 
-class VGG16Model(torch.nn.Module):
+class VGG19Model(torch.nn.Module):
     """
     VGG16 pretrained model with additional projection head for transfer learning
         
     """
     def __init__(self, layer):
-        super(VGG16Model, self).__init__()
+        super(VGG19Model, self).__init__()
         
         self.layer = layer
-        self.body = torchvision.models.vgg16(pretrained=True).features
+        self.body = torchvision.models.vgg19(pretrained=True).features
         
         for name,child in self.body.named_children():
             if name == self.layer:

@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 import logging
 import time
-from model_selection import EarlyStopping, VGG16Model
+from model_selection import EarlyStopping, VGG19Model
 from data_loader import GalaxyDataset
 
 
@@ -19,11 +19,11 @@ timestr = time.strftime("%Y%m%d-%H%M%S")
 
 ###################################################################################################
 # PATHS
-REL_PATH = ""
+REL_PATH = "../vgg19_model_output_2/"
 DATA_DIR = ""
 TEST_DATA_PATH        = "../resize_output/"
-VIS_RESULTS_PATH      = REL_PATH + ''
-FINAL_CHECKPOINT_PATH = "final_vgg16_model.pth"
+VIS_RESULTS_PATH      = REL_PATH
+FINAL_CHECKPOINT_PATH = REL_PATH + "final_vgg19_model.pth"
 results_record = open(VIS_RESULTS_PATH+"exp_results.csv", 'w+')
 
 try:
@@ -147,7 +147,7 @@ def get_data_loader(prefix):
 def test_model(best_params):
     
     val_loader = get_data_loader("test")    
-    model      = VGG16Model(best_params["layer"]).to(DEVICE)    
+    model      = VGG19Model(best_params["layer"]).to(DEVICE)
 
     try:
         model  = load_checkpoint(model)

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import torchvision.transforms as transforms
 import logging
-from model_selection import EarlyStopping, VGG16Model
+from model_selection import EarlyStopping, VGG19Model
 from data_loader import GalaxyDataset
 
 
@@ -66,8 +66,8 @@ def get_arguments():
     parser.add_argument('--cuda', type=int, default=2, help='use gpu support')
     parser.add_argument('--seed', type=int, default=123, help='select seed number for reproducibility')
     parser.add_argument('--root_path', type=str, default='./data.txt',help='path to dataset ')
-    parser.add_argument('--save', type=str, default = REL_PATH + 'checkpoints/vgg16_galaxy/',help='path to checkpoint save directory ')
-    parser.add_argument('--epochs', type=int,default=1, help = "number of training epochs")
+    parser.add_argument('--save', type=str, default = REL_PATH + 'checkpoints/vgg19_galaxy/',help='path to checkpoint save directory ')
+    parser.add_argument('--epochs', type=int,default=10, help = "number of training epochs")
     parser.add_argument('--trials', type=int, default=2, help = "number of HPO trials")
     
     args = parser.parse_args()
@@ -220,7 +220,7 @@ def draw_training_curves(train_losses, test_losses, curve_name, trial_num):
     plt.plot(train_losses, label='Training {}'.format(curve_name))
     plt.plot(test_losses, label='Testing {}'.format(curve_name))
     plt.legend(frameon=False)
-    plt.savefig(VIS_RESULTS_PATH + "/{}_vgg16_trial_{}.png".format(curve_name, trial_num))
+    plt.savefig(VIS_RESULTS_PATH + "/{}_vgg19_trial_{}.png".format(curve_name, trial_num))
     plt.close()
 
     
@@ -265,9 +265,13 @@ def objective(trial,direction = "minimize"):
 
     
     layer     = trial.suggest_categorical("layer",["21"])    
-    model     = VGG16Model(layer)
-    lr_body   = trial.suggest_categorical("lr_body", [1e-7, 1e-8, 1e-9])
-    lr_head   = trial.suggest_categorical("lr_head", [1e-4, 1e-5, 1e-6])
+    model     = VGG19Model(layer)
+    # lr_body   = trial.suggest_categorical("lr_body", [1e-7, 1e-8, 1e-9])
+    # lr_head   = trial.suggest_categorical("lr_head", [1e-4, 1e-5, 1e-6])
+
+    lr_body = trial.suggest_categorical("lr_body", [1e-4, 1e-5, 1e-6])
+    lr_head = trial.suggest_categorical("lr_head", [1e-4, 1e-5, 1e-6])
+
     optimizer = torch.optim.Adam([{'params': model.body.parameters(), 'lr':lr_body},
                                  {'params':model.head.parameters(), 'lr':lr_head}])
     
@@ -317,7 +321,7 @@ def hpo_monitor(study, trial):
     """
     Save optuna hpo study
     """
-    joblib.dump(study, CHECKPOINT_DIR+"hpo_galaxy_vgg16.pkl")
+    joblib.dump(study, 0+"hpo_galaxy_vgg19.pkl")
     
 
 
@@ -331,7 +335,7 @@ def get_best_params(best):
     parameters["trial_id"] = best.number
     parameters["value"] = best.value
     parameters["params"] = best.params
-    f = open("best_vgg16_hpo_params.txt","w")
+    f = open("best_vgg19_hpo_params.txt","w")
     f.write(str(parameters))
     f.close()
 
@@ -344,7 +348,7 @@ def create_optuna_study():
     global STUDY
     load_checkpoint_flag = True
     try:
-        STUDY = joblib.load("hpo_galaxy_vgg16.pkl")
+        STUDY = joblib.load("hpo_galaxy_vgg19.pkl")
         todo_trials = TRIALS - len(STUDY.trials_dataframe())
         if todo_trials > 0 :
             print("There are {} trials to do out of {}".format(todo_trials, TRIALS))

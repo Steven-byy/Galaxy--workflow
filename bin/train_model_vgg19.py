@@ -11,23 +11,23 @@ from sklearn.metrics import confusion_matrix
 import torchvision.transforms as transforms
 import logging
 import time
-from model_selection import EarlyStopping, VGG16Model
+from model_selection import EarlyStopping, VGG19Model
 from data_loader import GalaxyDataset
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 ###################################################################################################
 # Paths:
 
-REL_PATH = ""
+REL_PATH = "../vgg19_model_output_2/"
 DATA_DIR = ""
 TRAIN_DATA_PATH = "../resize_output/"
 TEST_DATA_PATH = "../resize_output/"
 VAL_DATA_PATH = "../resize_output/"
 
-CHECKPOINT_PATH = "../config/checkpoint_vgg16.pkl"
-EARLY_STOPPING_PATH = "early_stopping_vgg16_model.pth"
-FINAL_CHECKPOINT_PATH = "final_vgg16_model.pth"
-VIS_RESULTS_PATH = REL_PATH + ''
+CHECKPOINT_PATH = REL_PATH + "checkpoint_vgg19.pkl"
+EARLY_STOPPING_PATH =  REL_PATH + "early_stopping_vgg19_model.pth"
+FINAL_CHECKPOINT_PATH = REL_PATH + "final_vgg19_model.pth"
+VIS_RESULTS_PATH = REL_PATH
 
 try:
     os.makedirs(VIS_RESULTS_PATH)
@@ -64,13 +64,12 @@ def get_arguments():
     parser.add_argument('--cuda', type=int, default=0, help='use gpu support')
     parser.add_argument('--seed', type=int, default=123, help='select seed number for reproducibility')
     parser.add_argument('--root_path', type=str, default='./data.txt', help='path to dataset ')
-    parser.add_argument('--save', type=str, default=REL_PATH + 'checkpoints/vgg16_galaxy/',
+    parser.add_argument('--save', type=str, default=REL_PATH + 'checkpoints/vgg19_galaxy/',
                         help='path to checkpoint save directory ')
-    parser.add_argument('--epochs', type=int, default=1, help="number of training epochs")
+    parser.add_argument('--epochs', type=int, default=5, help="number of training epochs")
     args = parser.parse_args()
 
     return args
-
 
 ### -------------------------FOR DATALOADER --------------------------------
 class ToTensorRescale(object):
@@ -153,7 +152,6 @@ def train_loop(model, tloader, vloader, criterion, optimizer):
 
     return t_epoch_loss, t_epoch_accuracy, v_epoch_loss, v_epoch_accuracy
 
-
 ###################################################################################################
 
 # Evaluation functions 
@@ -226,7 +224,7 @@ def draw_training_curves(train_losses, test_losses, curve_name):
     plt.plot(train_losses, label='Training {}'.format(curve_name))
     plt.plot(test_losses, label='Testing {}'.format(curve_name))
     plt.legend(frameon=False)
-    plt.savefig(VIS_RESULTS_PATH + "{}_vgg16.png".format(curve_name))
+    plt.savefig(VIS_RESULTS_PATH + "{}_vgg19.png".format(curve_name))
 
 
 def get_data_loader(prefix):
@@ -261,7 +259,7 @@ def train_model(best_params):
     lr_body = best_params["lr_body"]
     lr_head = best_params["lr_head"]
 
-    model = VGG16Model(layer)
+    model = VGG19Model(layer)
     optimizer = torch.optim.Adam([{'params': model.body.parameters(), 'lr': lr_body},
                                   {'params': model.head.parameters(), 'lr': lr_head}])
 
@@ -286,7 +284,7 @@ def train_model(best_params):
         model, optimizer, start_epoch = load_checkpoint(model, optimizer)
         print("Checkpoint loaded. Restarting training.")
         restart = True
-        print(start_epoch)
+        print("Start_epoch: ",start_epoch)
     except Exception as e:
         print("Checkpoint not found. Training from scratch.")
 
@@ -306,10 +304,22 @@ def train_model(best_params):
             val_loss.append(epoch_val_loss)
             val_acc.append(epoch_val_acc)
             total_loss += epoch_val_loss
+
             print("Training loss: {0:.4f}  Train Accuracy: {1:0.2f}".format(epoch_train_loss, epoch_train_acc))
             print("Validation loss: {0:.4f}  Validation Accuracy: {1:0.2f}".format(epoch_val_loss, epoch_val_acc))
             print("--------------------------------------------------------")
 
+            f = open(REL_PATH + "vgg19_training_output",'a')
+            f.write("layer: {0} lr_body: {1} lr_head: {2}".format(layer, lr_body,lr_head))
+            f.write('\n\n')
+            f.write("Epoch {}".format(epoch+1))
+            f.write('\n')
+            f.write("Training loss: {0:.4f}  Train Accuracy: {1:0.2f}".format(epoch_train_loss, epoch_train_acc))
+            f.write('\n')
+            f.write("Validation loss: {0:.4f}  Validation Accuracy: {1:0.2f}".format(epoch_val_loss, epoch_val_acc))
+            f.write('\n')
+            f.write("--------------------------------------------------------")
+            f.write('\n')
             early_stop(epoch_val_loss, model, optimizer, epoch, layer)
             restart = False
 
@@ -328,12 +338,12 @@ def train_model(best_params):
         total_loss /= EPOCHS
     else:
         print("Training has been already completed.")
-
+    f.close()
     return
 
 
 def load_checkpoint(model, optimizer):
-    checkpoint = torch.load(CHECKPOINT_PATH)
+    checkpoint = torch.load(FINAL_CHECKPOINT_PATH)
     model.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
@@ -368,7 +378,7 @@ def main():
     BATCH_SIZE = ARGS.batch_size
     EPOCHS = ARGS.epochs
 
-    f = open("best_vgg16_hpo_params.txt").read()
+    f = open("best_vgg19_hpo_params.txt").read()
 
     best_params = eval(f)
     best_params = best_params["params"]

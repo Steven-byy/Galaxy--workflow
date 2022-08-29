@@ -130,7 +130,7 @@ def run_workflow(DATA_PATH):
     rc.add_replica("local", model_selction_fn, os.path.join(os.getcwd(),"bin/" + model_selction_fn ))
 
 
-    # FILES FOR vgg16_hpo.py VGG 16
+    # FILES FOR vgg19_hpo.py VGG 16
     #--------------------------------------------------------------------------------------------------------
     vgg16_pkl = "hpo_galaxy_vgg16.pkl"
     vgg16_pkl_file = File(vgg16_pkl)
@@ -170,7 +170,7 @@ def run_workflow(DATA_PATH):
     # HPO: main script
     vgg16_hpo = Transformation("vgg16_hpo",
                    site="local",
-                   pfn = "${PWD}/bin/vgg16_hpo.py", 
+                   pfn = "${PWD}/bin/vgg19_hpo.py",
                    is_stageable= True,
                    container=galaxy_container
                 )
@@ -178,7 +178,7 @@ def run_workflow(DATA_PATH):
     # Train Model
     train_model = Transformation("train_model",
                       site="local",
-                      pfn = "${PWD}/bin/train_model_vgg16.py", 
+                      pfn = "${PWD}/bin/train_model_vgg19.py",
                       is_stageable= True, 
                       container=galaxy_container
                  )

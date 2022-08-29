@@ -1,0 +1,6 @@
+layer: 21 lr_body: 0.0001 lr_head: 0.01
+
+Epoch 1
+Training loss: 1.4269  Train Accuracy: 0.29
+Validation loss: 1.4311  Validation Accuracy: 0.30
+--------------------------------------------------------

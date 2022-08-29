@@ -1,0 +1,1 @@
+{'trial_id': 0, 'value': 116.20339971019162, 'params': {'layer': '40', 'lr_body': 1e-03, 'lr_head': 1e-01}}
